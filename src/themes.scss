@@ -1,0 +1,7 @@
+// import Nebular Theme System and the default theme
+@import '~@nebular/theme/styles/theming';
+@import '~@nebular/theme/styles/themes/default';
+
+$nb-themes: nb-register-theme((
+  sidebar-bg: #252526
+), default, default); // let's leave it as default

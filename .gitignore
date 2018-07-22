@@ -4,6 +4,8 @@
 /dist
 /tmp
 /out-tsc
+/app-builds
+main.js
 
 # dependencies
 /node_modules
@@ -32,6 +34,7 @@
 npm-debug.log
 testem.log
 /typings
+package-lock.json
 
 # e2e
 /e2e/*.js

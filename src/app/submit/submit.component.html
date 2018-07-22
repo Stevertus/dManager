@@ -1,0 +1,21 @@
+<div class="head"><img src="favicon.ico" alt=""></div>
+<nb-card>
+  <nb-card-header>
+    How to submit your own datapack:
+  </nb-card-header>
+  <nb-card-body >
+    <markdown src="assets/submit.md"></markdown>
+    <h4 id="form">Submit a datapack right here:</h4>
+    <div class="input-group has-mail-icon">
+      <input type="email" ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/" required placeholder="email..." class="form-control {{Validation.mail}}" [(ngModel)]="email"/>
+    </div>
+    <div class="input-group">
+      <input type="url" required placeholder="url to datapack.json..." class="form-control {{Validation.url}}" [(ngModel)]="url"/>
+    </div>
+    <div class="input-group ">
+      <textarea rows="5" placeholder="short description..." class="form-control {{Validation.mess}}" [(ngModel)]="message"></textarea>
+    </div>
+    <button class="btn btn-primary" (click)="submitPack(email, message, url)">Submit</button>
+    <p id="validation" *ngIf="Validation.success">Sucessfully submitted!</p>
+  </nb-card-body>
+</nb-card>

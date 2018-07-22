@@ -1,0 +1,25 @@
+.head {
+  height: 8vw;
+  position: absolute;
+  left: calc(50% + 125px);
+  transform: translateX(-50%);
+}
+nb-card {
+  position: absolute;
+  width: 960px;
+  top: 16vw;
+  left: calc(50% + 125px);
+  transform: translateX(-50%);
+  nb-card-header {
+    font-size: 2vw;
+    text-align: center;
+  }
+}
+.input-group {
+  margin: 5px 0;
+}
+#validation {
+  margin-left: 10px;
+  display: inline-block;
+  color: green;
+}

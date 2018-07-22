@@ -1,0 +1,12 @@
+<div class="modal-header">
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <p>{{msg}}</p>
+</div>
+<div class="modal-footer">
+  <button *ngIf="option1" type="button" class="btn {{option1.color}}" (click)="activeModal.close('option1')">{{option1.t}}</button>
+  <button *ngIf="option2" type="button" class="btn {{option2.color}}" (click)="activeModal.close('option2')">{{option2.t}}</button>
+</div>

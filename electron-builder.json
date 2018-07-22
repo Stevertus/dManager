@@ -1,0 +1,24 @@
+{
+  "productName": "mcScriptEditor",
+  "directories": {
+    "output": "app-builds"
+  },
+  "win": {
+    "icon": "dist/favicon.ico",
+    "target": [
+      "portable"
+    ]
+  },
+  "mac": {
+    "icon": "dist/favicon.icns",
+    "target": [
+      "dmg"
+    ]
+  },
+  "linux": {
+    "icon": "dist",
+    "target": [
+      "AppImage"
+    ]
+  }
+}

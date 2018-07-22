@@ -1,3 +1,33 @@
-<h1>
-  {{title}}
-</h1>
+<nb-layout>
+  <nb-sidebar left size="700px">
+    <nb-sidebar-header routerLink="">
+      <img src="favicon.ico" alt=""> <p>dManager</p>
+    </nb-sidebar-header>
+      <div class="container">
+        <i class="nb-loop" (click)="getWorlds()"></i>
+        <ng-container *ngFor="let world of worlds; let i = index">
+          <div class="world" [ngClass]="{selected: i == selectedWorld}" (click)="onSelectWorld(world,i)" [routerLink]="'/world/' + world.name">
+            <div class="icon"><img  *ngIf="world.icon" [src]="world.icon" alt=""></div>
+            <div class="name">{{world.name}}</div></div>
+        </ng-container>
+        <div class="error" *ngIf="!worlds.length && noWorlds">
+          <img src="favicon.ico" alt="">
+          <p>In the selected minecraft folder are no worlds!</p>
+        </div>
+        <div class="error" *ngIf="!worlds.length && !noWorlds">
+          <button class="btn btn-hero-success btn-block">Load Worlds</button>
+        </div>
+        <div style="height:95%" *ngIf="!worlds.length && !noWorlds">
+
+        </div>
+      </div>
+      <nb-sidebar-footer>
+        <button class="btn btn-info" type="button" routerLink="submit">
+          Submit datapack
+        </button>
+      </nb-sidebar-footer>
+  </nb-sidebar>
+  <nb-layout-column>
+<router-outlet></router-outlet>
+</nb-layout-column>
+</nb-layout>

@@ -1,0 +1,61 @@
+<ng-container *ngIf="pack">
+  <div class="back" [routerLink]="'/world/' + worldName">< back</div>
+<div class="banner" [ngClass]="{withVideo: pack.video}"><img *ngIf="pack.banner" [src]="pack.banner" alt=""></div>
+<div class="play" *ngIf="pack.video && !playvideo" (click)="playvideo = true"><i class="nb-arrow-dropright"></i></div>
+<div class="video" *ngIf="pack.video && playvideo">
+  <iframe  width="888" height="500" [src]="'https://www.youtube.com/embed/' + pack.video + '?rel=0;&autoplay=1' | safeURL" frameborder="0" allow="autoplay" allowfullscreen></iframe>
+  <i class="nb-close" (click)="playvideo = false"></i>
+</div>
+<nb-card>
+  <nb-card-header>
+    <h3>{{pack.title}}</h3>
+    <table class="side-table table table-bordered">
+        <tr>
+          <th><img [src]="pack.logo" alt="">
+          </th>
+        </tr>
+        <tr>
+          <td>Id: {{pack.id}}</td>
+        </tr>
+        <tr>
+          <td>Version: {{pack.version}}</td>
+        </tr>
+        <tr *ngIf="pack.creator && !pack.creatorLink">
+          <td>Creator: {{pack.creator}}</td>
+        </tr>
+        <tr *ngIf="pack.creator && pack.creatorLink">
+          <td>Creator: <p class="link" (click)="openInBrowser(pack.creatorLink)">{{pack.creator}}</p></td>
+        </tr>
+        <tr *ngIf="pack.type">
+          <td>{{pack.type.substr(0,1).toUpperCase() + pack.type.substr(1)}}</td>
+        </tr>
+        <tr *ngIf="pack.website">
+          <td>Website: <p class="link" (click)="openInBrowser(pack.website)">{{pack.website}}</p></td>
+        </tr>
+        <tr *ngIf="pack.dependencies">
+          <td>Dependencies: {{pack.dependencies.join(", ")}}</td>
+        </tr>
+    </table>
+  </nb-card-header>
+  <nb-card-header class="buttons">
+    <button class="btn btn-hero-success install-btn" *ngIf="!status" (click)="install(pack)">Install {{selectedVersion != "Choose an older version" ? "v" + selectedVersion : ""}}</button>
+    <button class="btn btn-hero-info install-btn" *ngIf="status == 'update' && !(version && selectedVersion != 'Choose an older version' && selectedVersion != version)" (click)="install(pack)">Update to Version v{{pack.version}}</button>
+    <button class="btn btn-hero-info install-btn" *ngIf="version && selectedVersion != 'Choose an older version' && selectedVersion != version" (click)="install(pack,i)" (click)="install(pack)">Change Version to v{{ selectedVersion}}</button>
+    <button class="btn btn-hero-warning install-btn" *ngIf="status == 'installed' && !pack.offline && !(version && selectedVersion != 'Choose an older version' && selectedVersion != version)" (click)="uninstall(pack)">Deinstall</button>
+    <button class="btn btn-disabled install-btn" disabled *ngIf="status == 'installing'">Installing...</button>
+
+    <div class="dropdown ghost-dropdown" ngbDropdown id="dropVersion">
+      <button class="btn btn-primary" type="button" ngbDropdownToggle>
+        {{selectedVersion}}
+      </button>
+      <ul class="dropdown-menu" ngbDropdownMenu >
+        <li class="dropdown-item" (click)="selectVersion(-1)">Latest</li>
+        <li class="dropdown-item" *ngFor="let version of objectKeys(pack.files)" (click)="selectVersion(version)">v{{version}}</li>
+      </ul>
+    </div>
+  </nb-card-header>
+  <nb-card-body>
+    <markdown [data]="desc"></markdown>
+  </nb-card-body>
+</nb-card>
+</ng-container>
