@@ -131,13 +131,12 @@ installPack(pack,world,version = ""){
 installPackBack(pack,world,version){
   let promise = new Promise((resolve, reject) => {
     this.server.addDownload('dM-' + pack.id).subscribe(res => {})
-    this.server.getFile(pack.files[version]).then((file) => {
+    this.server.getFile(pack.files[version]).then((getFile:any) => {
       let self = this
-      toBuffer(file, (err, buffer) => {
+      toBuffer(getFile.file, (err, buffer) => {
         if (err) throw err
-        file = buffer
-        let filename = pack.files[version].split("/").slice(-1).toString()
-        console.log(filename)
+        let file = buffer
+        let filename = getFile.url.split("/").slice(-1).toString()
         filename = filename.split('?').slice(0,1).toString()
         filename = filename.replace(/%20/g," ")
         let update = false

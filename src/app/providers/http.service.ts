@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions, ResponseContentType } from '@angular/http';
 import 'rxjs/add/operator/map'
 
-const URI:any = 'http://stevertus.ga/'//'http://localhost:3000/'//'http://stevertus.ga/'//'/'////'/'//// || '/'
+const URI:any = 'http://stevertus.ga/'//'http://localhost:3000/'//'http://stevertus.ga/'//
 const URL = URI + 'api/'
 @Injectable()
 export class HttpService {
@@ -40,29 +40,52 @@ export class HttpService {
   getFile(url){
     if(url.substr(0,1) == "/") url = URI + url.substr(1)
     let promise = new Promise((resolve, reject) => {
-      let options = new RequestOptions({responseType: ResponseContentType.Blob });
-      this._http.get(url, options).map(res => res.blob())
-      .toPromise()
-      .then(res => {
-        if(res) resolve(res)
-        else reject()
+      this.getFullLink(url).then((url2 : string) => {
+        let options = new RequestOptions({responseType: ResponseContentType.Blob });
+        this._http.get(url2, options).map(res => res.blob())
+        .toPromise()
+        .then(res => {
+          if(res) resolve({file: res,url: url2})
+          else reject()
+        })
       })
+    })
+    return promise
+  }
+  getFullLink(url){
+    let promise = new Promise((resolve, reject) => {
+      if(url.slice(0,20) == "https://nofile.io/f/"){
+        let options = new RequestOptions({responseType: ResponseContentType.Text });
+        this._http.get(url, options).map(res => res.text())
+        .toPromise().then(res => {
+          res = res.toString()
+          let aElement = res.match(/\<a.href="\/g\/.+/g)[0]
+          let href = aElement.match(/href=".*\" /)[0]
+          href= "https://nofile.io" + href.substr(6,href.length - 8)
+          if(href.substr(-1) == "/") href = href.substr(0,href.length - 1)
+          resolve(href)
+        })
+      } else {
+        resolve(url)
+      }
+
     })
     return promise
   }
   getTextFile(url){
     if(url.substr(0,1) == "/") url = URI + url.substr(1)
     let promise = new Promise((resolve, reject) => {
-      let options = new RequestOptions({responseType: ResponseContentType.Text });
-      this._http.get(url, options).map(res => res.text())
-      .toPromise()
-      .then(res => {
-        if(res) resolve(res)
-        else reject()
-      }).catch(err => {
-        reject(err)
+      this.getFullLink(url).then((url2:string) => {
+        let options = new RequestOptions({responseType: ResponseContentType.Text });
+        this._http.get(url2, options).map(res => res.text())
+        .toPromise()
+        .then(res => {
+          if(res) resolve(res)
+          else reject()
+        }).catch(err => {
+          reject(err)
+        })
       })
-
     })
     return promise
   }

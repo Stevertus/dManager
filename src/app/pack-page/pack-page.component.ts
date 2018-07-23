@@ -47,7 +47,7 @@ export class PackPageComponent implements OnInit {
     else this.selectedVersion = v
   }
   install(pack){
-    pack.status = "installing"
+    this.status = "installing"
     let version = ""
     if(this.selectedVersion != "Choose an older version") version = this.selectedVersion
     this.electronService.installPack(pack,this.worldName,version).then((res:any) => {
