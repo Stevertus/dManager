@@ -19,13 +19,19 @@ export class AppComponent implements OnInit {
     if (electronService.isElectron()) {
       console.log('Mode electron');
       if(!localStorage.getItem('mcFolder')){
-        let path: any = this.electronService.remote.app.getAppPath().split("/")
-        if(path.length == 1) path = path[0].split("\\")
-        let index = path.indexOf(".minecraft")
-        if(index != -1){
-          path = path.slice(0,index + 1)
+        let path: any
+        path = this.electronService.remote.app.getPath('appData') + '/.minecraft'
+        console.log(path)
+        if(!this.electronService.fs.existsSync(path)) path = ""
+        if(!path){
+          this.electronService.remote.app.getAppPath().split("/")
+          if(path.length == 1) path = path[0].split("\\")
+          let index = path.indexOf(".minecraft")
+          if(index != -1){
+            path = path.slice(0,index + 1)
+          }
+          path = path.join("/")
         }
-        path = path.join("/")
         localStorage.setItem('mcFolder',path)
         console.log("detected " + path + " as minecraft folder")
       }
