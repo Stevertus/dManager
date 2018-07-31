@@ -1,3 +1,20 @@
+.errorMessage {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 3vh;
+  background-color: rgb(244, 203, 83);
+  nb-card-header {
+    font-size: 2vh;
+    position: relative;
+    .nb-close {
+      top: 2px;
+      right: 2px;
+      font-size: 4vh;
+      position: absolute;
+    }
+  }
+}
 nb-sidebar {
   .nb-loop {
     position: absolute;

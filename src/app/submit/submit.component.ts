@@ -176,7 +176,7 @@ export class SubmitComponent implements OnInit {
   generate(){
     this.genResult = ""
     if(!this.checkErrors()){
-      let res = this.formInput
+      let res = Object.assign({},this.formInput)
       delete res.email
       if(this.dependencies) res.dependencies = Object.keys(this.dependencies).filter(x => this.dependencies[x] == true)
       if(res.dependencies && !res.dependencies.length){

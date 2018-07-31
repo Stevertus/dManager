@@ -31,7 +31,6 @@ export class ElectronService {
     this.fs = window.require('fs');
   }
 }
-
 isElectron(){
   return window && window.process && window.process.type;
 }
@@ -55,6 +54,9 @@ saveMc(url,file){
     })
   })
   return promise
+}
+isUptoDate(){
+  return this.server.getTextFile('/downloads/dManager version.txt')
 }
 installedDatapacks: any = {}
 getInstalledPacks(world){
