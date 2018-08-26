@@ -1,0 +1,24 @@
+{
+    "welcome": "Welcome to dManager!",
+	"welcome-text":"Hello and welcome to dManager, the datapack installer and updater.<br>The usage is simple: Select a world on the left and install datapacks from the given list."
+	"select-folder-text":"You can also open a different Minecraft folder: ",
+	"select-folder":"Select .minecraft folder",
+	"submit-pack":"submit datapack",
+	"editing-packs":"Editing packs for",
+	"installed":"Installed",
+	"uninstall":"uninstall",
+	"update":"Update to version",
+	"install":"Install",
+	"installing":"Installing...",
+	"offline":"Offline",
+	"by-creator":"by ",
+	"load-worlds":"Load worlds",
+	"no-worlds":"In the selected minecraft folder are no worlds!",
+	"no-worlds-found":"Sorry, but no worlds were found! Please check if you put the executeable into the .minecraft folder or select a minecraft folder:"
+	"no-desc":"The creator didn´t provide a description.",
+	"latest":"latest",
+	"creator":"Creator",
+	"website":"Website",
+	"dependecies":"Dependencies",
+	"outdated":"This version of dManager is outdated! Your version is not secure and no longer supported!<br> Please download the new version from <a href="http://stevertus.ga/dManager">www.stevertus.ga/dManager</a>"
+}

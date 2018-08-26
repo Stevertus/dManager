@@ -118,9 +118,16 @@ export class HttpService {
         let url = item.url
         if(url.slice(0,1) == "/") url = "/downloads" + item.url
         if(url.slice(-5) != ".json") url += "/datapack.json"
-        itemArray.push(this.getTextFile(url))
+        itemArray.push(new Promise((resolve,reject) => {
+          this.getTextFile(url).then(res => resolve(res))
+          .catch(err => {
+            console.log("Error getting pack for " + url)
+            resolve(false)
+          })
+        }))
       }
       res = await Promise.all(itemArray)
+      res = res.filter(x => x != false)
       res = res.map(x => {
         console.log(x)
         x = JSON.parse(x)
@@ -145,6 +152,7 @@ export class HttpService {
         if(x.url && x.description.substr(0,1) == "/") x.description = x.url + x.description.substr(1)
         return x
       })
+      console.log(JSON.stringify(res))
       return res
     }
   }

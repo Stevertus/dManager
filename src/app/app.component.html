@@ -31,3 +31,6 @@
 <router-outlet></router-outlet>
 </nb-layout-column>
 </nb-layout>
+<nb-card class="errorMessage" *ngIf="newVersion">
+  <nb-card-header>This version of dManager is outdated! Your version is not secure and no longer supported!<br> Please download the new version from <a href="http://stevertus.ga/dManager">www.stevertus.ga/dManager</a> <i class="nb-close" (click)="newVersion = false"></i></nb-card-header>
+</nb-card>

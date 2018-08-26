@@ -41,7 +41,7 @@
     <button class="btn btn-hero-success install-btn" *ngIf="!status" (click)="install(pack)">Install {{selectedVersion != "Choose an older version" ? "v" + selectedVersion : ""}}</button>
     <button class="btn btn-hero-info install-btn" *ngIf="status == 'update' && !(version && selectedVersion != 'Choose an older version' && selectedVersion != version)" (click)="install(pack)">Update to Version v{{pack.version}}</button>
     <button class="btn btn-hero-info install-btn" *ngIf="version && selectedVersion != 'Choose an older version' && selectedVersion != version" (click)="install(pack,i)" (click)="install(pack)">Change Version to v{{ selectedVersion}}</button>
-    <button class="btn btn-hero-warning install-btn" *ngIf="status == 'installed' && !pack.offline && !(version && selectedVersion != 'Choose an older version' && selectedVersion != version)" (click)="uninstall(pack)">Deinstall</button>
+    <button class="btn btn-hero-warning install-btn" *ngIf="status == 'installed' && !pack.offline && !(version && selectedVersion != 'Choose an older version' && selectedVersion != version)" (click)="uninstall(pack)">Uninstall</button>
     <button class="btn btn-disabled install-btn" disabled *ngIf="status == 'installing'">Installing...</button>
 
     <div class="dropdown ghost-dropdown" ngbDropdown id="dropVersion">

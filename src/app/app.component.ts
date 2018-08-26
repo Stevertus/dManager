@@ -12,6 +12,8 @@ export class AppComponent implements OnInit {
   worlds: any = []
   noWorlds = false
   selectedWorld = -1
+  currentVersion = '1.1'
+  newVersion = false
   constructor(public electronService: ElectronService,private router: Router) {
 
     console.log('AppConfig', AppConfig);
@@ -41,6 +43,9 @@ export class AppComponent implements OnInit {
   }
   ngOnInit(){
     this.getWorlds()
+    this.electronService.isUptoDate().then(res => {
+      if(this.currentVersion != res) this.newVersion = true
+    })
   }
   getWorlds(){
     this.electronService.fs.readdir(localStorage.getItem('mcFolder') + "/saves",(err,res) => {
