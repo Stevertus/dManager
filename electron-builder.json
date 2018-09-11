@@ -6,7 +6,7 @@
   "win": {
     "icon": "dist/favicon.ico",
     "target": [
-      "portable"
+      "squirrel"
     ]
   },
   "mac": {
@@ -20,5 +20,8 @@
     "target": [
       "AppImage"
     ]
+  },
+  "appImage": {
+  "systemIntegration": "doNotAsk"
   }
 }

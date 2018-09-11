@@ -3,7 +3,7 @@
 
 // framework component styles which will use your new theme
 @import '~@nebular/theme/styles/globals';
-
+@import '~ngx-bar-rating/themes/br-horizontal-theme';
 // install the framework
 @include nb-install() {
   @include nb-theme-global();
@@ -14,4 +14,27 @@ html, body {
   padding: 0;
 
   height: 100%;
+}
+*:focus {
+    outline: none;
+}
+.loadingError {
+  width: 960px;
+  margin: 7% auto;
+  .img {
+    margin: 20px auto;
+    width: 150px;
+    img {
+      width: 150px;
+    }
+  }
+  p {
+    background-color: darken(#535557,8);
+    color: #E0E0E0;
+    text-align: center;
+    padding: 10px;
+    border-radius: 15px;
+    margin-top: 20px;
+    font-size: 18px;
+  }
 }

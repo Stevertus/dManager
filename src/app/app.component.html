@@ -10,9 +10,10 @@
             <div class="icon"><img  *ngIf="world.icon" [src]="world.icon" alt=""></div>
             <div class="name">{{world.name}}</div></div>
         </ng-container>
+        <a class="btn btn-block" routerLink="/about" translate>about</a>
         <div class="error" *ngIf="!worlds.length && noWorlds">
           <img src="favicon.ico" alt="">
-          <p>In the selected minecraft folder are no worlds!</p>
+          <p translate>no-worlds-found</p>
         </div>
         <div class="error" *ngIf="!worlds.length && !noWorlds">
           <button class="btn btn-hero-success btn-block">Load Worlds</button>
@@ -22,9 +23,9 @@
         </div>
       </div>
       <nb-sidebar-footer>
-        <button class="btn btn-info" type="button" routerLink="submit">
-          Submit datapack
-        </button>
+        <a class="btn btn-info" type="button" href="https://dmanager.stevertus.com/dashboard" translate>
+          submit-pack
+        </a>
       </nb-sidebar-footer>
   </nb-sidebar>
   <nb-layout-column>
@@ -32,5 +33,6 @@
 </nb-layout-column>
 </nb-layout>
 <nb-card class="errorMessage" *ngIf="newVersion">
-  <nb-card-header>This version of dManager is outdated! Your version is not secure and no longer supported!<br> Please download the new version from <a href="http://stevertus.ga/dManager">www.stevertus.ga/dManager</a> <i class="nb-close" (click)="newVersion = false"></i></nb-card-header>
+  <nb-card-header><div [innerHtml]="'outdated' | translate"></div> <i class="nb-close" (click)="newVersion = false"></i></nb-card-header>
 </nb-card>
+<auto-updater></auto-updater>

@@ -1,52 +1,48 @@
-nb-card-header {
+.user-preview {
+  width: 960px;
+  margin: 10px auto;
   position: relative;
-  padding: 0 !important;
-  height: 6vw;
-  min-height: 60px;
-  .logo {
-    height: 100%;
-    width: 6vw;
-    min-width: 60px;
-    background: #45454a;
-    cursor: pointer;
+  nb-card-header {
+    height: 200px;
   }
-  .logo-offline {
-    background-image: linear-gradient(to right, #ffd324, #ffae24);
+  h3 {
     text-align: center;
-    line-height: 6vw;
   }
-  h2 {
-    position: absolute;
-    left: calc(30px + 6vw);
-    width: calc(74vw - 310px);
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 2vw;
-    cursor: pointer;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+  nb-user {
+    position: absolute !important;
+    left: 50%;
+    transform: translateX(-50%);
   }
   p {
-    color: rgb(185, 185, 185);
-    margin-top: -1.5vw;
-    margin-left: 8vw;
-  }
-  .install-btn {
-    padding: 0.1vw 0;
-    height: 50%;
-    width: 10vw;
+    text-align: center;
     position: absolute;
-    right: 5vw;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 1vw;
-  }
-  .install-btn.btn-hero-info {
-    width: 13vw;
+    width: calc(100% - 2.5rem);
+    bottom: 30px;
+    font-size: 25px;
   }
 }
-.group p {
-  font-size: 1vw;
-  cursor: pointer;
+.hot {
+  position: relative;
+  background: rgba(0, 0, 0, 0.05);
+  margin: 10px -2.25rem;
+  padding: 1.25rem 3rem;
+  h3 {
+    margin: 0 10vw 10px;
+    text-align: center;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgb(181, 181, 181);
+  }
+  .nb-close {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 25px;
+    color: rgb(181, 181, 181);
+    cursor: pointer;
+  }
+}
+app-login {
+  position: absolute;
+  top: 30px;
+  right: 20px;
 }

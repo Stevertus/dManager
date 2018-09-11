@@ -4,97 +4,183 @@ import { ElectronService } from '../providers/electron.service';
 import {Router, ActivatedRoute } from '@angular/router'
 //import * as electron from 'electron'
 @Component({
-  selector: 'app-pack-list',
-  templateUrl: './pack-list.component.html',
-  styleUrls: ['./pack-list.component.scss']
+selector: 'app-pack-list',
+templateUrl: './pack-list.component.html',
+styleUrls: ['./pack-list.component.scss']
 })
 export class PackListComponent implements OnInit {
 
   constructor(private server: HttpService,public electronService: ElectronService, private route: ActivatedRoute) {
     var app = electronService.remote.app;
-  console.log(app.getAppPath());
+    console.log(app.getAppPath());
   }
+  topPacks = {
+  installedPacks:{filter: "installed", title: "filter.installed",display: false, packs: []},
+  ownPacks:{filter: "own", title: "filter.own",display: false, packs: []},
+  trendPacks: {filter: "trendy", title: "filter.hot-now",display: false, packs: []},
+  adminPacks: {filter: "admin", title: "[admin] All open packs right now:",display: false, packs: []}
+}
+packs: any = []
+filterInput:any
+isLoading: boolean = false
+packsCreator:any
+
   datapacks: any
   allPacks: any
-  installedDatapacks: any = []
+  installedPacks: any = []
   worldName = ""
+  isLoggedIn
   async ngOnInit() {
-    try {
-      this.allPacks = await this.server.getPackets()
-    } catch(err){
-      console.log(err)
-    }
+    this.server.getUserData().subscribe(res => {
+      if(res && res.success){
+        this.isLoggedIn = 1
+        if(res.role == 'staff') this.isLoggedIn = 2
+        if(res.role == 'admin') this.isLoggedIn = 3
+      }
+    })
     this.route.params.subscribe(params => {
       this.worldName = params.name
-      this.electronService.getInstalledPacks(this.worldName).then((res: any) => {
-        this.installedDatapacks = res
-        let worldPacks
-        if(!this.allPacks){
-          this.allPacks = res.map(x => {
-            return {title: x.title, status: 'installed', offline: true, type: "datapack"}
-          })
-          worldPacks = this.allPacks
-        } else {
-          worldPacks = this.allPacks.slice(0).map(x => {
-            delete x.status
-            return x
-          })
+      console.log("worldname",this.worldName)
+      })
+      this.installedPacks = undefined
+    }
+    install(pack,index,packs){
+      pack.status = "installing"
+      this.electronService.installPack(pack,this.worldName).then((res:any) => {
+        pack.status = "installed"
+        if(!res.updated){
+          this.installedPacks.push(pack)
+          this.getInstalledPacks(packs)
         }
-        for(let installed of this.installedDatapacks){
-          // pack von websource
-          let pack = worldPacks.find(x => x.id == installed.id)
-          console.log(pack)
-          if(pack){
-          if(pack.version == installed.version) pack.status = "installed"
-          else pack.status = "update"
+        if(res.dependencies){
+          for(let depend of res.dependencies){
+            let newpack = packs.find(x => x.id === depend)
+            newpack.status = "installed"
+            if(!res.updated){
+              this.installedPacks.push(newpack)
+              this.getInstalledPacks(packs)
+              this.getInstalledPacks(this.packs)
+            }
           }
         }
-        this.datapacks = [
-          {name:"Installed",packs:worldPacks.filter(x=> x.status == "installed" || x.status == "update")},
-          {name:"Datapacks",packs:worldPacks.filter(x=> !x.status && x.type == "datapack")},
-          {name:"Resourcepacks",packs:worldPacks.filter(x=> !x.status && x.type == "resourcepack")}]
-        worldPacks = []
-        console.log(this.datapacks)
+
       })
-    })
-  }
-
-  install(pack,index){
-    pack.status = "installing"
-    this.electronService.installPack(pack,this.worldName).then((res:any) => {
-      pack.status = "installed"
-      if(!res.updated){
-        if(pack.type == "datapack") this.datapacks[1].packs.splice(this.datapacks[1].packs.indexOf(pack),1)
-        else if(pack.type == "resourcepack") this.datapacks[2].packs.splice(this.datapacks[2].packs.indexOf(pack),1)
-        this.datapacks[0].packs.unshift(pack)
-      }
-      if(res.dependencies){
-        for(let depend of res.dependencies){
-          let newpack = this.datapacks[1].packs.find(x => x.id === depend)
-          newpack.status = "installed"
-          this.datapacks[0].packs.unshift(newpack)
-          if(pack.type == "datapack") this.datapacks[1].packs.splice(this.datapacks[1].packs.indexOf(newpack),1)
-          else if(pack.type == "resourcepack") this.datapacks[2].packs.splice(this.datapacks[2].packs.indexOf(newpack),1)
-        }
-      }
-
-    })
-  }
-  uninstall(pack,index){
-
-    this.electronService.removePack(pack,this.worldName).then(res => {
-      pack.status = ""
-      this.datapacks[0].packs.splice(index,1)
-      if(pack.type == "datapack") this.datapacks[1].packs.unshift(pack)
-      else if(pack.type == "resourcepack") this.datapacks[2].packs.unshift(pack)
-
-    })
-  }
-  getPageLink(pack){
-    let version = this.installedDatapacks.find(x => x.id === pack.id)
-    let res = 'pack/' + pack.id + '/' + pack.status + '/'
-    if(version) res += version.version
-    else res += "-1"
-    return res
-  }
+    }
+    getObjectValues(obj){
+  return Object.values(obj)
 }
+    uninstall(pack,index){
+      this.electronService.removePack(pack,this.worldName).then(res => {
+        pack.status = ""
+        this.installedPacks.splice(this.installedPacks.indexOf(pack),1)
+        let allpacks = this.packs.find(x => x.id === pack.id)
+        if(allpacks) allpacks.status = ""
+        let ownpacks = this.topPacks.ownPacks.packs.find(x => x.id === pack.id)
+        if(ownpacks) ownpacks.status = ""
+        let trendPacks = this.topPacks.trendPacks.packs.find(x => x.id === pack.id)
+        if(trendPacks) trendPacks.status = ""
+      })
+    }
+    getInstalledPacks(allPacks,isOffline = false){
+      if(this.installedPacks){
+        let changes = 0
+          let packs = this.installedPacks.map(installed => {
+            // pack von websource
+            let pack = allPacks.find(x => x.id == installed.id)
+            if(isOffline) installed.offline = true
+            if(!installed.status) installed.status = "installed"
+            if(pack){
+              if(pack.version == installed.version) pack.status = "installed"
+              else pack.status = "update"
+              changes++
+              return pack
+            }
+            return installed
+          })
+          console.log("installed2",packs)
+          if(changes > 0 || allPacks.length == 0){
+            this.topPacks.installedPacks.display = true
+            this.topPacks.installedPacks.packs = packs
+          }
+          this.installedPacks = packs
+          return allPacks
+        } else {
+          this.electronService.getInstalledPacks(this.worldName).then((res: any) => {
+            this.installedPacks = res
+            console.log('installed',res)
+            this.getInstalledPacks(allPacks)
+          })
+        }
+    }
+    filterChange(e){
+      this.filterInput = e
+      if(e.filter == 'by' && e.search.trim().length){
+        this.isLoading = true
+        this.packs = []
+        this.server.getAllPacks(e.language,'creator:' + e.search.toLowerCase()).then((res:any) => {
+          this.isLoading = false
+          if(res && res.success){
+            if(res.creator.avatar) res.creator.avatar = this.server.getUrl() + 'cdn/' +  res.creator.avatar
+            this.packs = res.packs
+            this.getInstalledPacks(this.packs)
+            this.packsCreator = res.creator
+          }
+          else {
+            this.packs = []
+            this.packsCreator = undefined
+          }
+        })
+      }
+    }
+    filterSettingChange(e){
+      this.filterChange(e)
+      if(e.changed == 'loading'){
+        this.installedPacks = undefined
+        this.topPacks.installedPacks.packs = []
+      }
+      if((e.changed == 'loading' && e.show.own) || (e.changed == 'show' && e.show.own)) this.server.getOwnPacks().subscribe(res => {
+        if(res && this.topPacks){
+          this.topPacks.ownPacks.display = true
+          for(let i = res.length -1; i >= 0; i--){
+            let pack = res[i]
+            if(pack.id.substr(-7) == ' :edit:') {
+              let orign = res.find(x => x.id == pack.id.substr(0,pack.id.length-7))
+              if(orign) res.splice(res.indexOf(orign),1)
+            }
+          }
+          this.topPacks.ownPacks.packs = res
+          this.getInstalledPacks(this.topPacks.ownPacks.packs)
+        }
+      })
+      if((e.changed == 'show' && !e.show.own)) this.topPacks.ownPacks.display = false
+      if((e.changed == 'loading' && e.show.admin) || (e.changed == 'show' && e.show.admin)) this.server.getAdminStates('verifing').subscribe(res => {
+        if(res && res.success){
+          this.topPacks.adminPacks.display = true
+          this.topPacks.adminPacks.packs = res.packs
+          this.getInstalledPacks(this.topPacks.adminPacks.packs)
+        }
+      })
+      if((e.changed == 'show' && !e.show.admin)) this.topPacks.ownPacks.display = false
+      if((e.changed == 'loading' && e.show.trendy) || (e.changed == 'show' && e.show.trendy)) this.server.getAllPacks(e.language,'top5').then((res:any) => {
+        if(res && res.success){
+          this.topPacks.trendPacks.display = true
+          this.topPacks.trendPacks.packs = res.packs
+          this.getInstalledPacks(this.topPacks.trendPacks.packs)
+        }
+      })
+      if((e.changed == 'show' && !e.show.trendy)) this.topPacks.trendPacks.display = false
+      if((!this.packs.length && e.changed == 'searchFilterOff') || (!this.packs.length && e.search == '') || (e.changed == 'loading' && !this.packsCreator) || e.changed == 'sort' || e.changed == 'language'){
+        this.isLoading = true
+        this.server.getAllPacks(e.language,e.sort).then((res:any) => {
+          this.isLoading = false
+          if(!(e.changed == 'loading' && this.packsCreator)){
+            if(res && res.success){
+              this.packs = res.packs
+              this.getInstalledPacks(this.packs)
+            } else this.getInstalledPacks([],true)
+            if(this.packsCreator) this.packsCreator = undefined
+          }
+        })
+      }
+    }
+  }

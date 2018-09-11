@@ -9,16 +9,13 @@ import { ElectronService } from '../providers/electron.service';
 export class WelcomeComponent implements OnInit {
 
   constructor(private electronService: ElectronService) { }
-  welcome = `
-    Hello and welcome to dManager, the datapack installer and updater.<br>
-    The usage is simple: Select a world on the left and install datapacks from the given list.<br><br>
-  `
+  welcome
   ngOnInit() {
     if(sessionStorage.getItem('home-page') == "no-worlds"){
-      this.welcome += 'Sorry, but no worlds were found! Please check if you put the executeable into the .minecraft folder or select a minecraft folder: '
+      this.welcome = 'no-worlds-found'
       sessionStorage.removeItem('home-page')
     } else {
-      this.welcome += 'You can also open a different Minecraft folder: <br>'
+      this.welcome = 'select-folder-text'
     }
   }
   selectPath(){

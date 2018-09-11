@@ -1,5 +1,10 @@
+<div class="btn btn-info back" [routerLink]="'/world/' + worldName"> <i class="nb-arrow-left"></i> {{'detail.back' | translate}}</div>
+<load-spinner color="#4e4e4e" *ngIf="isLoading && !pack"></load-spinner>
+<div *ngIf="!isLoading && !pack" class="loadingError">
+  <div class="img"><img src="assets/ex-icon.svg" alt=""></div>
+  <p translate>detail.no-pack</p>
+</div>
 <ng-container *ngIf="pack">
-  <div class="back" [routerLink]="'/world/' + worldName">< back</div>
 <div class="banner" [ngClass]="{withVideo: pack.video}"><img *ngIf="pack.banner" [src]="pack.banner" alt=""></div>
 <div class="play" *ngIf="pack.video && !playvideo" (click)="playvideo = true"><i class="nb-arrow-dropright"></i></div>
 <div class="video" *ngIf="pack.video && playvideo">
@@ -9,52 +14,72 @@
 <nb-card>
   <nb-card-header>
     <h3>{{pack.title}}</h3>
-    <table class="side-table table table-bordered">
-        <tr>
-          <th><img [src]="pack.logo" alt="">
-          </th>
-        </tr>
-        <tr>
-          <td>Id: {{pack.id}}</td>
-        </tr>
-        <tr>
-          <td>Version: {{pack.version}}</td>
-        </tr>
-        <tr *ngIf="pack.creator && !pack.creatorLink">
-          <td>Creator: {{pack.creator}}</td>
-        </tr>
-        <tr *ngIf="pack.creator && pack.creatorLink">
-          <td>Creator: <p class="link" (click)="openInBrowser(pack.creatorLink)">{{pack.creator}}</p></td>
-        </tr>
-        <tr *ngIf="pack.type">
-          <td>{{pack.type.substr(0,1).toUpperCase() + pack.type.substr(1)}}</td>
-        </tr>
-        <tr *ngIf="pack.website">
-          <td>Website: <p class="link" (click)="openInBrowser(pack.website)">{{pack.website}}</p></td>
-        </tr>
-        <tr *ngIf="pack.dependencies">
-          <td>Dependencies: {{pack.dependencies.join(", ")}}</td>
-        </tr>
-    </table>
   </nb-card-header>
   <nb-card-header class="buttons">
-    <button class="btn btn-hero-success install-btn" *ngIf="!status" (click)="install(pack)">Install {{selectedVersion != "Choose an older version" ? "v" + selectedVersion : ""}}</button>
-    <button class="btn btn-hero-info install-btn" *ngIf="status == 'update' && !(version && selectedVersion != 'Choose an older version' && selectedVersion != version)" (click)="install(pack)">Update to Version v{{pack.version}}</button>
-    <button class="btn btn-hero-info install-btn" *ngIf="version && selectedVersion != 'Choose an older version' && selectedVersion != version" (click)="install(pack,i)" (click)="install(pack)">Change Version to v{{ selectedVersion}}</button>
-    <button class="btn btn-hero-warning install-btn" *ngIf="status == 'installed' && !pack.offline && !(version && selectedVersion != 'Choose an older version' && selectedVersion != version)" (click)="uninstall(pack)">Uninstall</button>
-    <button class="btn btn-disabled install-btn" disabled *ngIf="status == 'installing'">Installing...</button>
+    <button class="btn btn-hero-success install-btn" *ngIf="getButtonState() == 0" (click)="install(pack)" translate>install</button>
+    <button class="btn btn-hero-success install-btn" *ngIf="getButtonState() == 1" (click)="install(pack)">{{'install' | translate}} v{{selectedVersion}}</button>
+    <button class="btn btn-hero-info install-btn" *ngIf="getButtonState() == 2" (click)="install(pack)">{{'update' | translate}} v{{pack.version}}</button>
+    <button class="btn btn-hero-info install-btn" *ngIf="getButtonState() == 3" (click)="install(pack)">Change Version to v{{ selectedVersion}}</button>
+    <button class="btn btn-hero-warning install-btn" *ngIf="getButtonState() == 4" (click)="uninstall(pack)" translate>uninstall</button>
+    <button class="btn btn-disabled install-btn" disabled *ngIf="getButtonState() == -1" translate>installing</button>
 
     <div class="dropdown ghost-dropdown" ngbDropdown id="dropVersion">
-      <button class="btn btn-primary" type="button" ngbDropdownToggle>
+      <button class="btn btn-primary" type="button" ngbDropdownToggle *ngIf="selectedVersion == 'detail.choose-older'" translate>
+        detail.choose-older
+      </button>
+      <button class="btn btn-primary" type="button" ngbDropdownToggle *ngIf="selectedVersion != 'detail.choose-older'">
         {{selectedVersion}}
       </button>
       <ul class="dropdown-menu" ngbDropdownMenu >
-        <li class="dropdown-item" (click)="selectVersion(-1)">Latest</li>
-        <li class="dropdown-item" *ngFor="let version of objectKeys(pack.files)" (click)="selectVersion(version)">v{{version}}</li>
+        <li class="dropdown-item" (click)="selectVersion(-1)" translate>latest</li>
+        <li class="dropdown-item" *ngFor="let version of pack.files" (click)="selectVersion(version)">v{{version}}</li>
       </ul>
     </div>
+    <a *ngIf="pack.editable" [href]="'https://dmanager.stevertus.com/pack/' + packId" class="btn btn-outline btn-info">Statistics</a>
   </nb-card-header>
   <nb-card-body>
+    <table class="side-table table table-bordered">
+          <tr>
+            <th><img [src]="server.getCdnIcon(pack.logo)" alt="">
+            </th>
+          </tr>
+          <tr class="rating" *ngIf="pack.stats && pack.stats.totalRaters && pack.stats.ratingPoints">
+            <td>
+              <div>{{pack.stats.totalRaters}} {{'detail.ratings' | translate}}</div><br>
+              <bar-rating [rate]="getRating()" max=5 theme="horizontal" showText="User ratings:" (rateChange)="onRate($event)"></bar-rating>
+              <div *ngIf="!alreadyRated" translate>detail.interested</div><br>
+              <div *ngIf="alreadyRated" translate>detail.thanks-rating</div><br>
+            </td>
+          </tr>
+          <tr class="rating" *ngIf="!(pack.stats && pack.stats.totalRaters && pack.stats.ratingPoints)">
+            <td>
+              <div translate>detail.no-ratings</div><br>
+              <bar-rating [rate]="0" max=5 theme="horizontal" showText="User ratings:" (rateChange)="onRate($event)"></bar-rating>
+              <div translate>detail.be-first</div><br>
+            </td>
+          </tr>
+          <tr>
+            <td>{{'version' | translate}}: {{pack.version}}</td>
+          </tr>
+          <tr *ngIf="pack.creator">
+            <td><a [href]="'https://dmanager.stevertus.com/packs/search/by:' + pack.creator"><nb-user style="cursor:pointer" size="large" [name]="pack.creator" [picture]="server.getCdnIcon(pack.avatar)"></nb-user></a></td>
+          </tr>
+          <tr *ngIf="pack.stats && (pack.stats.totalViews || pack.stats.totalDownloads)">
+            <td>
+              <ng-container *ngIf="pack.stats.totalViews">Views: {{pack.stats.totalViews}} </ng-container>
+              <ng-container *ngIf="pack.stats.totalDownloads">Downloads: {{pack.stats.totalDownloads}}</ng-container>
+            </td>
+          </tr>
+          <tr *ngIf="pack.type">
+            <td>{{pack.type.substr(0,1).toUpperCase() + pack.type.substr(1)}}</td>
+          </tr>
+          <tr *ngIf="pack.website">
+            <td>{{'website' | translate}}: <p class="link" (click)="openInBrowser(pack.website)">{{pack.website}}</p></td>
+          </tr>
+          <tr *ngIf="pack.dependencies">
+            <td>{{'dependecies' | translate}}: {{pack.dependencies.join(", ")}}</td>
+          </tr>
+      </table>
     <markdown [data]="desc"></markdown>
   </nb-card-body>
 </nb-card>

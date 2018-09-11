@@ -1,0 +1,49 @@
+.contains {
+  position: relative;
+  width: 20vw;
+  min-width: 50px;
+  min-height: 340px;
+  padding: 20px;
+  background-color: #535557;
+  border-radius: 10px;
+  z-index: 7;
+}
+.btn {
+  width: calc(100% - 40px);
+  position: absolute;
+  bottom: 20px;
+  background-color: rgba(4, 4, 4, 0.3);
+}
+.nb-close {
+  cursor: pointer;
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 30px;
+  height: 30px;
+  font-size: 28px;
+  background-color: rgb(230, 230, 230);
+  border: 1px solid rgb(210, 210, 210);
+  border-radius: 15px;
+  color: rgb(70, 70, 70);
+  &:hover {
+    background-color: darkenrgb(rgb(230, 230, 230),2);
+  }
+}
+.new {
+  width: 50%;
+  margin: 20px auto;
+  padding: 5px 20px;
+  border-radius: 5px;
+  background-color: darken(#535557,8);
+  color: #E0E0E0;
+}
+h2 {
+  color: #E0E0E0;
+  text-align: center;
+}
+p {
+  color: rgb(178, 178, 179);
+  text-align: center;
+  margin: 10px;
+}

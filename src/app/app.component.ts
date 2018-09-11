@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ElectronService } from './providers/electron.service';
 import { AppConfig } from './app.config';
-import {Router} from "@angular/router";
+import { Router, NavigationEnd } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +15,7 @@ export class AppComponent implements OnInit {
   selectedWorld = -1
   currentVersion = '1.1'
   newVersion = false
-  constructor(public electronService: ElectronService,private router: Router) {
+  constructor(public electronService: ElectronService,private router: Router,private translate: TranslateService) {
 
     console.log('AppConfig', AppConfig);
 
@@ -34,7 +35,7 @@ export class AppComponent implements OnInit {
           }
           path = path.join("/")
         }
-        localStorage.setItem('mcFolder',path)
+        if(this.electronService.fs.existsSync(path)) localStorage.setItem('mcFolder',path)
         console.log("detected " + path + " as minecraft folder")
       }
     } else {
@@ -43,9 +44,15 @@ export class AppComponent implements OnInit {
   }
   ngOnInit(){
     this.getWorlds()
-    this.electronService.isUptoDate().then(res => {
-      if(this.currentVersion != res) this.newVersion = true
+    this.electronService.registerStartup()
+    this.electronService.isUptoDate().then((res:any) => {
+      console.log(res)
+      if(res && res.length < 10 && this.currentVersion != res) this.newVersion = true
     })
+    if(this.translate.getBrowserLang() && !localStorage.getItem('lang')) localStorage.setItem("lang", this.translate.getBrowserLang())
+    this.translate.setDefaultLang('en');
+    if(localStorage.getItem('lang')) this.translate.use(localStorage.getItem('lang'))
+    else this.translate.use('en')
   }
   getWorlds(){
     this.electronService.fs.readdir(localStorage.getItem('mcFolder') + "/saves",(err,res) => {
@@ -70,6 +77,7 @@ export class AppComponent implements OnInit {
           }
         }
       }
+      if(this.selectedWorld < 0 && this.router.url.split('/')[1] == 'world') this.selectedWorld = this.worlds.indexOf(this.worlds.find(x => x.name === this.router.url.split('/')[2].replace(/%20/g," ")))
     })
   }
   onSelectWorld(world,i){

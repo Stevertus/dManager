@@ -7,6 +7,6 @@
   <p>{{msg}}</p>
 </div>
 <div class="modal-footer">
-  <button *ngIf="option1" type="button" class="btn {{option1.color}}" (click)="activeModal.close('option1')">{{option1.t}}</button>
-  <button *ngIf="option2" type="button" class="btn {{option2.color}}" (click)="activeModal.close('option2')">{{option2.t}}</button>
+  <button *ngIf="option1" type="button" class="btn {{option1.color}}" (click)="activeModal.close('option1')" translate>{{option1.t}}</button>
+  <button *ngIf="option2" type="button" class="btn {{option2.color}}" (click)="activeModal.close('option2')" translate>{{option2.t}}</button>
 </div>

@@ -1,0 +1,10 @@
+<nb-card>
+  <nb-card-header>
+    <img [src]="server.getCdnIcon(pack.logo)" alt="" class="logo" *ngIf="!pack.offline" [routerLink]="getPageLink(pack)">
+    <div class="logo logo-offline" *ngIf="pack.offline">Offline</div>
+    <h2 *ngIf="!pack.offline" [routerLink]="pageLink">{{pack.title}}</h2>
+    <p *ngIf="!pack.offline && pack.creator" [routerLink]="pageLink">by {{pack.creator}}</p>
+    <h2 *ngIf="pack.offline">{{pack.title}}</h2>
+    <ng-content></ng-content>
+  </nb-card-header>
+</nb-card>

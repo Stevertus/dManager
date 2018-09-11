@@ -1,0 +1,45 @@
+<div class="contained">
+  <div class="bar">
+    <div class="searchbar">
+      <div class="highlight" *ngIf="filterSettings.filter">{{filterSettings.filter}}</div>
+      <input type="text" [placeholder]="'filter.search-filter' | translate" [(ngModel)]="searchInput" #searchInputField (keyup)="searchChanged($event)">
+      <img class="searchIcon" src="assets/search-icon.svg">
+    </div>
+    <img class="filterIcon" *ngIf="!menuOpen" (click)="menuOpen = true" src="assets/filter-icon.svg">
+    <i class="filterIcon nb-close" *ngIf="menuOpen" (click)="menuOpen = false"></i>
+  </div>
+  <div class="filterMenu" [ngClass]="{'filter-open': menuOpen, 'filter-close': menuOpen == false}">
+    <div class="filterSection filterSection-barrier">
+      <h3 translate>filter.filter-packs</h3>
+      <p [innerHtml]="'filter.filter-packs-text' | translate"></p>
+    </div>
+    <div class="filterSection filterSection-barrier">
+      <nb-checkbox status="info" *ngIf="filterConfig.display.datapacks" [disabled]="!filterSettings.display.resourcepacks && filterSettings.display.datapacks" [value]="filterSettings.display.datapacks" #check1 (change)="checkDisplay('datapacks',check1)">{{'filter.display-dps' | translate}}</nb-checkbox>
+      <nb-checkbox status="info" *ngIf="filterConfig.display.resourcepacks" [disabled]="!filterSettings.display.datapacks && filterSettings.display.resourcepacks" [value]="filterSettings.display.resourcepacks" #check2 (change)="checkDisplay('resourcepacks',check2)">{{'filter.display-rps' | translate}}</nb-checkbox>
+      <nb-checkbox status="success" [style.visibility]="isLoggedIn > 1 ? 'visible': 'hidden'" [(ngModel)]="filterSettings.show.admin" (change)="settingChanged('show')">Show open admin packs</nb-checkbox>
+      <div ngbDropdown class="dropdown" *ngIf="filterConfig.sort">
+        <button class="btn btn-outline-info" type="button" ngbDropdownToggle>{{'filter.sort-by' | translate}}: {{'filter.' + filterSettings.sort | translate}}</button>
+        <ul class="dropdown-menu" ngbDropdownMenu>
+          <li class="dropdown-item" *ngIf="filterConfig.sortPossible.trendy" (click)="changeValue('sort','trendy')" translate>filter.trendy</li>
+          <li class="dropdown-item" *ngIf="filterConfig.sortPossible.trend" (click)="changeValue('sort','trend')" translate>filter.trend</li>
+          <li class="dropdown-item" *ngIf="filterConfig.sortPossible.update" (click)="changeValue('sort','update')" translate>filter.update</li>
+          <li class="dropdown-item" *ngIf="filterConfig.sortPossible.date" (click)="changeValue('sort','date')" translate>filter.date</li>
+          <li class="dropdown-item" *ngIf="filterConfig.sortPossible.views" (click)="changeValue('sort','views')" translate>filter.views</li>
+          <li class="dropdown-item" *ngIf="filterConfig.sortPossible.downloads" (click)="changeValue('sort','downloads')" translate>filter.downloads</li>
+        </ul>
+      </div>
+    </div>
+    <div class="filterSection">
+      <nb-checkbox status="success" [(ngModel)]="filterSettings.show.installed" (click)="settingChanged('show')">{{'filter.show-installed' | translate}}</nb-checkbox>
+      <nb-checkbox status="success" *ngIf="filterConfig.show.trendy" [(ngModel)]="filterSettings.show.trendy" (change)="settingChanged('show')">{{'filter.show-trend' | translate}}</nb-checkbox>
+      <nb-checkbox status="success" *ngIf="filterConfig.show.own" [style.visibility]="isLoggedIn ? 'visible': 'hidden'" [(ngModel)]="filterSettings.show.own" (change)="settingChanged('show')">{{'filter.show-my-packs' | translate}}</nb-checkbox>
+      <div ngbDropdown class="dropdown" *ngIf="filterConfig.language">
+        <button class="btn btn-outline-success" type="button" ngbDropdownToggle>{{'language' | translate}}: <ng-container *ngIf="filterSettings.language != 'any'">{{filterSettings.language}}</ng-container><ng-container *ngIf="filterSettings.language == 'any'">{{'filter.any' | translate}}</ng-container></button>
+        <ul class="dropdown-menu" ngbDropdownMenu>
+          <li class="dropdown-item" (click)="changeValue('language','any')">{{'filter.any' | translate}}</li>
+          <li class="dropdown-item" *ngFor="let lang of languages" (click)="changeValue('language',lang.id)"><img style="height: 30px; border-radius: 5px;margin-right:10px" [src]="'assets/lang-icons/' + lang.icon" alt="">{{lang.name}}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

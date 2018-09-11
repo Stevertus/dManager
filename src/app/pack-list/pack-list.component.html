@@ -1,25 +1,39 @@
-<h3 *ngIf="worldName">Editing packs for {{worldName}}</h3>
-<ng-container *ngFor="let group of datapacks">
-<div class="group" *ngIf="group.packs && group.packs.length">
-  <p *ngIf="!group.collapsed" (click)="group.collapsed = true">{{group.name}}({{group.packs.length}}) ▲</p>
-  <p *ngIf="group.collapsed" (click)="group.collapsed = false">{{group.name}}({{group.packs.length}}) ▼</p>
-  <div *ngIf="!group.collapsed">
-  <ng-container *ngFor="let pack of group.packs; let i = index">
-    <nb-card>
-      <nb-card-header>
-        <img [src]="pack.logo" alt="" class="logo" *ngIf="!pack.offline" [routerLink]="getPageLink(pack)">
-        <div class="logo logo-offline" *ngIf="pack.offline">Offline</div>
-        <h2 *ngIf="!pack.offline" [routerLink]="getPageLink(pack)">{{pack.title}}</h2>
-        <p *ngIf="!pack.offline && pack.creator" [routerLink]="getPageLink(pack)">by {{pack.creator}}</p>
-        <h2 *ngIf="pack.offline">{{pack.title}}</h2>
-        <button class="btn btn-hero-success install-btn" *ngIf="!pack.status" (click)="install(pack,i)">Install</button>
-        <button class="btn btn-hero-info install-btn" *ngIf="pack.status == 'update'" (click)="install(pack,i)">Update to Version {{pack.version}}</button>
-        <button class="btn btn-hero-warning install-btn" *ngIf="pack.status == 'installed' && !pack.offline" (click)="uninstall(pack,i)">Uninstall</button>
-        <button class="btn btn-disabled install-btn" disabled *ngIf="pack.status == 'installed' && pack.offline">Installed</button>
-        <button class="btn btn-disabled install-btn" disabled *ngIf="pack.status == 'installing'">Installing...</button>
-      </nb-card-header>
-    </nb-card>
+<h3 *ngIf="worldName">{{'editing-packs' | translate}} <a href="javascript()" (click)="electronService.openWorld(worldName)">{{worldName}}</a></h3>
+<app-login></app-login>
+<search-filter (searchInChange)="filterChange($event)" (filterChange)="filterSettingChange($event)" [isLoggedIn]="isLoggedIn"></search-filter>
+<load-spinner color="#4e4e4e" *ngIf="isLoading && !packs.length"></load-spinner>
+<nb-card *ngIf="packsCreator" class="user-preview" status="success">
+  <nb-card-header >
+    <h3>{{'filter.made-by' | translate}} {{packsCreator.username}}</h3>
+    <nb-user [name]="packsCreator.username" [picture]="packsCreator.avatar" size="large" onlyPicture="true"></nb-user>
+    <p>{{packsCreator.username}}</p>
+  </nb-card-header>
+</nb-card>
+<ng-container *ngFor="let hotpage of getObjectValues(topPacks)">
+<div *ngIf="!packsCreator && hotpage.packs && hotpage.packs.length && !(filterInput && (!filterInput.show[hotpage.filter] || filterInput.search))" class="hot">
+<h3>{{hotpage.title | translate}}</h3>
+<i class="nb-close" (click)="filterInput.show[hotpage.filter] = false"></i>
+<ng-container *ngFor="let pack of hotpage.packs; let i = index ">
+  <list-item [pack]="pack" [installed]="installedPacks">
+    <button class="btn btn-hero-success install-btn" *ngIf="!pack.status && !pack.offline" (click)="install(pack,i,hotpage.packs)" translate>install</button>
+    <button class="btn btn-hero-info install-btn" *ngIf="pack.status == 'update'" (click)="install(pack,i,hotpage.packs)">{{'update' | translate}} {{pack.version}}</button>
+    <button class="btn btn-hero-warning install-btn" *ngIf="pack.status == 'installed'" (click)="uninstall(pack,i)" translate>uninstall</button>
+    <!-- <button class="btn btn-disabled install-btn" disabled *ngIf="pack.status == 'installed' && pack.offline" translate>installed</button> -->
+    <button class="btn btn-disabled install-btn" disabled *ngIf="pack.status == 'installing'" translate>installing</button>
+  </list-item>
   </ng-container>
-    </div>
 </div>
 </ng-container>
+<div *ngIf="!isLoading && (!packs || !packs.length || (packs | search: filterInput).length == 0)" class="loadingError">
+  <div class="img"><img src="assets/ex-icon.svg" alt=""></div>
+  <p translate>filter.no-packs</p>
+</div>
+  <ng-container *ngFor="let pack of packs | search: filterInput; let i = index">
+    <list-item [pack]="pack" [installed]="installedPacks">
+      <button class="btn btn-hero-success install-btn" *ngIf="!pack.status" (click)="install(pack,i,packs)" translate>install</button>
+      <button class="btn btn-hero-info install-btn" *ngIf="pack.status == 'update'" (click)="install(pack,i,packs)">{{'update' | translate}} {{pack.version}}</button>
+      <button class="btn btn-hero-warning install-btn" *ngIf="pack.status == 'installed' && !pack.offline" (click)="uninstall(pack,i)" translate>uninstall</button>
+      <button class="btn btn-disabled install-btn" disabled *ngIf="pack.status == 'installed' && pack.offline" translate>installed</button>
+      <button class="btn btn-disabled install-btn" disabled *ngIf="pack.status == 'installing'" translate>installing</button>
+    </list-item>
+  </ng-container>

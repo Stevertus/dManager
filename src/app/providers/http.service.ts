@@ -1,41 +1,126 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions, ResponseContentType } from '@angular/http';
 import 'rxjs/add/operator/map'
+import * as toBuffer from 'blob-to-buffer';
 
-const URI:any = 'http://stevertus.ga/'//'http://localhost:3000/'//'http://stevertus.ga/'//
+const URI:any = 'https://dmanager.stevertus.com/'//'http://stevertus.ga/'//
 const URL = URI + 'api/'
 @Injectable()
 export class HttpService {
-
+  getToken(){
+    return localStorage.getItem('JWT-Token')
+  }
+  getUrl(){
+    return URI
+  }
+  getCdnIcon(url){
+    if(url && url.substr(0,5) == 'icons') return URI + 'cdn/' + url
+    return url
+  }
   constructor(private _http: Http) { }
-  addDownload(tool) {
+  login(name, password){
     let headers = new Headers({'Content-Type': 'application/json'});
     let options = new RequestOptions({ headers: headers });
-    let content = {
-      tool: tool
-    }
-    return this._http.post(URL + 'downloads', JSON.stringify(content), options)
-    .map((response: Response) => response.json())
+    return this._http.post(URL + 'login', JSON.stringify({name: name, password: password, lang: localStorage.getItem('lang')}), options)
+    .map((response: Response) => response.json());
   }
-  addView(tool) {
-    let headers = new Headers({'Content-Type': 'application/json'});
+  getUserData(){
+    let headers = new Headers({'Content-Type': 'application/json','Authorization': this.getToken()});
     let options = new RequestOptions({ headers: headers });
-    let content = {
-      tool: tool
-    }
-    return this._http.post(URL + 'views', JSON.stringify(content), options)
-    .map((response: Response) => response.json())
+    return this._http.get(URL + 'getUserData', options)
+    .map((response: Response) => response.json());
   }
-  submit(mail, text) {
+  getAllPacks(lang = undefined,sort = undefined){
+    if(lang == 'any') lang = undefined
+    let isStat: boolean
+    if(sort){
+      switch(sort){
+        case 'date': {
+          sort = undefined;
+          break;
+        }
+        case 'update': {
+          sort = 'timeEdited';
+          break;
+        }
+        case 'views': {
+          sort = 'totalViews';
+          isStat = true
+          break;
+        }
+        case 'downloads': {
+          sort = 'totalDownloads';
+          isStat = true
+          break;
+        }
+        case 'trendy': {
+          sort = 'trendRank';
+          isStat = true
+          break;
+        }
+        case 'trend': {
+          sort = 'highGP';
+          isStat = true
+          break;
+        }
+      }
+    }
     let headers = new Headers({'Content-Type': 'application/json'});
     let options = new RequestOptions({ headers: headers });
-    let content = {
-      tool: 'dManager',
-      mail: mail,
-      msg: text
-    }
-    return this._http.post(URL + 'help', JSON.stringify(content), options)
-    .map((response: Response) => response.json())
+    return this._http.post(URL + 'datapacks',JSON.stringify({sort: sort, lang: lang, isStat: isStat}), options)
+    .map((response: Response) => response.json()).toPromise().then(res => {
+      this.allPacks = res.packs
+      console.log(res)
+      return new Promise((re,rej) => re(res))
+    }).catch((err) => {
+      return new Promise((re,rej) => re({success:false}))
+    });
+  }
+  allPacks = []
+  getPacketsSync(){
+    return this.allPacks
+  }
+  getOwnPacks(){
+    let headers = new Headers({'Content-Type': 'application/json','Authorization': this.getToken()});
+    let options = new RequestOptions({ headers: headers });
+    return this._http.get(URL + 'ownPacks', options)
+    .map((response: Response) => response.json());
+  }
+  downloadVersion(id,version){
+    this.addStat(id,'download')
+    let promise = new Promise((resolve, reject) => {
+      let headers = new Headers({'Content-Type': 'application/json','Authorization': this.getToken()});
+      let options = new RequestOptions({ headers: headers });
+      return this._http.get(URL + 'download/' + id + '/' + version, options)
+      .map((response: Response) => response.json()).toPromise().then(res => {
+        if(res && res.success && res.file) resolve({file: res.file, name: res.name})
+        else if(res.success && res.url) this.getFile(res.url).then((file:any) => {
+          console.log(file)
+          toBuffer(file.file, (err, buffer) => {
+            resolve({file: buffer, name: res.name})
+          })
+        })
+      });
+    })
+    return promise
+  }
+  getAdminStates(status){
+    let headers = new Headers({'Content-Type': 'application/json','Authorization': this.getToken()});
+    let options = new RequestOptions({ headers: headers });
+    return this._http.get(URL + 'admin/getFromStatus/' + status, options)
+    .map((response: Response) => response.json());
+  }
+  addStat(id,type,rating = {}){
+    let headers = new Headers({'Content-Type': 'application/json','Authorization': this.getToken()});
+    let options = new RequestOptions({ headers: headers });
+    return this._http.post(URL + 'addProperty/' + id, Object.assign({type: type,lang: localStorage.getItem('lang')},rating), options)
+    .map((response: Response) => response.json()).toPromise();
+  }
+  getFullPack(id){
+    let url = URL + 'pack/'
+    let headers = new Headers({'Content-Type': 'application/json','Authorization': this.getToken()});
+    let options = new RequestOptions({ headers: headers });
+    return this._http.get(url + id, options).map((response: Response) => response.json()).toPromise();
   }
   getFile(url){
     if(url.substr(0,1) == "/") url = URI + url.substr(1)
@@ -88,72 +173,5 @@ export class HttpService {
       })
     })
     return promise
-  }
-  public prePacks: any = []
-  getPacketsSync(){
-    return this.prePacks
-  }
-  getPackets() {
-    let promise = new Promise((resolve, reject) => {
-      if(!this.prePacks.length) this.getServerPackets().then(res => {
-        this.prePacks = res
-        resolve(this.prePacks)
-      })
-      else resolve(this.prePacks)
-    })
-    return promise
-  }
-  getServerPackets = async function(){
-    let res
-    try {
-      if(URI.slice(0) == "http://localhost:3000/") res = await this.getTextFile("/downloads/datapacks.json")
-      else res = await this.getTextFile("http://raw.githubusercontent.com/Stevertus/dManager-packages/master/datapacks.json")
-    } catch(err) {
-      console.log(err)
-    }
-    if(res){
-      res = JSON.parse(res)
-      let itemArray = []
-      for(let item of res){
-        let url = item.url
-        if(url.slice(0,1) == "/") url = "/downloads" + item.url
-        if(url.slice(-5) != ".json") url += "/datapack.json"
-        itemArray.push(new Promise((resolve,reject) => {
-          this.getTextFile(url).then(res => resolve(res))
-          .catch(err => {
-            console.log("Error getting pack for " + url)
-            resolve(false)
-          })
-        }))
-      }
-      res = await Promise.all(itemArray)
-      res = res.filter(x => x != false)
-      res = res.map(x => {
-        console.log(x)
-        x = JSON.parse(x)
-        if(!x.logo) x.logo = "/logo.png"
-        if(!x.type) x.type = "datapack"
-        if(!x.description) x.description = "/desc.md"
-        if(x.url && x.url.substr(0,1) == "/") x.url = URI + "downloads" + x.url
-        if(x.video){
-          let regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-          var match = x.video.match(regExp);
-          if (match && match[2].length == 11) {
-            x.video = match[2]
-          }
-        }
-        if(x.url && x.url.substr(-1) != "/") x.url += "/"
-        if(x.url && x.logo.substr(0,1) == "/") x.logo = x.url + x.logo.substr(1)
-        if(x.banner && x.banner.substr(0,1) == "/") x.banner = x.url + x.banner.substr(1)
-        for(let version of Object.keys(x.files)){
-          let file = x.files[version]
-          if(x.url && file.substr(0,1) == "/") x.files[version] = x.url + file.substr(1)
-        }
-        if(x.url && x.description.substr(0,1) == "/") x.description = x.url + x.description.substr(1)
-        return x
-      })
-      console.log(JSON.stringify(res))
-      return res
-    }
   }
 }

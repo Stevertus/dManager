@@ -1,12 +1,14 @@
 <img src="assets/bg.png" alt="" class="bg">
 <nb-card>
-  <nb-card-header>
-    Welcome to dManager!
+  <nb-card-header translate>
+    welcome
   </nb-card-header>
   <nb-card-body >
-    <div [innerHtml]="welcome"></div>
-    <button class="btn btn-block btn-info" type="button" (click)="selectPath()">
-      Select .minecraft folder
+    <div [innerHtml]="('welcome-text' | translate) + '<br><br>'"></div>
+    <div [innerHtml]="welcome | translate"></div>
+    <button class="btn btn-block btn-info" type="button" (click)="selectPath()" translate>
+      select-folder
     </button>
   </nb-card-body>
 </nb-card>
+<lang-selector></lang-selector>

@@ -1,0 +1,10 @@
+<div class="contains" *ngIf="show">
+  <h2 translate>updater.available</h2>
+  <div class="new" *ngIf="version">{{'updater.new' | translate}} v{{version}}</div>
+  <button class="btn btn-block" *ngIf="state == 'downloading'" disabled>{{'updater.downloading' | translate}}{{animatedPoints}}</button>
+  <p *ngIf="state == 'restart'" translate>updater.restart</p>
+  <p *ngIf="state == 'error'" translate>updater.error</p>
+  <button class="btn btn-block btn-success" *ngIf="state == 'restart'" (click)="restart()" translate>updater.restartBtn</button>
+  <button class="btn btn-block btn-danger" *ngIf="state == 'error'">Error</button>
+  <i class="nb-close" (click)="show = false"></i>
+</div>

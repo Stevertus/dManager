@@ -1,0 +1,21 @@
+.aboutMenu {
+  width: 960px;
+  position: fixed;
+  left: 50vw;
+  transform: translateX(-50%);
+  top: 0px;
+  z-index: 20;
+  background-color: red;
+}
+nb-card{
+  min-width: 960px;
+  width: 40vw;
+  margin: 5% auto;
+  min-height: 78vh;
+}
+nb-card-header {
+  font-size: 30px;
+  img {
+    height: 40px;
+  }
+}

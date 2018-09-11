@@ -1,7 +1,7 @@
 import { PackListComponent } from './pack-list/pack-list.component'
+import { AboutComponent } from './about/about.component'
 import { WelcomeComponent } from './welcome/welcome.component'
 import { PackPageComponent } from './pack-page/pack-page.component'
-import { SubmitComponent } from './submit/submit.component'
 
 
 import { NgModule } from '@angular/core';
@@ -13,16 +13,16 @@ const routes: Routes = [
         component: WelcomeComponent
     },
     {
+        path: 'about',
+        component: AboutComponent
+    },
+    {
         path: 'world/:name',
         component: PackListComponent
     },
     {
         path: 'world/:name/pack/:id/:status/:version',
         component: PackPageComponent
-    },
-    {
-        path: 'submit',
-        component: SubmitComponent
     }
 ];
 

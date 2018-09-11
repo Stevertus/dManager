@@ -1,6 +1,57 @@
-import { app, BrowserWindow, screen, shell } from 'electron';
+import { app, BrowserWindow, screen, shell, dialog, autoUpdater, ipcMain } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
+const ChildProcess = require('child_process');
+const exeName = path.basename(process.execPath);
+const updateDotExe = path.resolve(path.join(path.resolve(path.resolve(process.execPath, '..'), '..'), 'Update.exe'));
+
+const squirrelUrl = "https://dmanager.stevertus.com/cdn/Releases"
+
+const startAutoUpdater = (squirrelUrl) => {
+  console.log(squirrelUrl)
+  autoUpdater.setFeedURL(`${squirrelUrl}/`);
+
+  autoUpdater.addListener("update-available", (event, releaseNotes, releaseName) => {
+    win.webContents.send('update-state','downloading',releaseName)
+  });
+  autoUpdater.addListener("update-downloaded", (event, releaseNotes, releaseName) => {
+    win.webContents.send('update-state','restart',releaseName)
+  });
+
+  autoUpdater.addListener("error", (error) => {
+    win.webContents.send('update-state','error',error)
+  });
+
+  autoUpdater.checkForUpdates();
+}
+const handleSquirrelEvent = () => {
+  if (process.argv.length === 1) {
+    return false;
+  }
+
+  const squirrelEvent = process.argv[1];
+  switch (squirrelEvent) {
+    case '--squirrel-install':
+    case '--squirrel-updated':
+      ChildProcess.spawn(updateDotExe,['--createShortcut', exeName], {detached: true});
+      setTimeout(app.quit, 1000);
+      return true;
+    case '--squirrel-uninstall':
+      ChildProcess.spawn(updateDotExe,['--removeShortcut', exeName], {detached: true});
+      setTimeout(app.quit, 1000);
+      return true;
+
+    case '--squirrel-obsolete':
+      app.quit();
+      return true;
+  }
+}
+handleSquirrelEvent()
+
+ipcMain.on('restart',(e,a) => {
+  autoUpdater.quitAndInstall()
+})
+
 
 let win, serve;
 const args = process.argv.slice(1);
@@ -34,6 +85,7 @@ function createWindow() {
      electron: require(`${__dirname}/node_modules/electron`)});
     win.loadURL('http://localhost:4200');
   } else {
+    if (process.env.NODE_ENV !== "dev") startAutoUpdater(squirrelUrl)
     win.loadURL(url.format({
       pathname: path.join(__dirname, 'dist/index.html'),
       protocol: 'file:',

@@ -1,0 +1,17 @@
+<div class="container">
+  <div class="selectLang" (click)="toggleMenu()">
+    <img src="assets/lang-icons/translations.svg" alt="" class="icon">
+    <p translate>my-lang</p>
+    <img *ngIf="selectedLang.lang.icon" [src]="'assets/lang-icons/'+ selectedLang.lang.icon" class="flag">
+  </div>
+  <div class="langMenu" *ngIf="langMenuOpen">
+    <div class="langSection langSection-barrier" *ngFor="let fith of displayedLangs; let i = index">
+      <ng-container *ngFor="let lang of fith; let j = index ">
+      <div class="lang-item" [ngClass]="{'lang-active': lang.selected}" (click)="selectLang(i,j,lang)">
+        <img [src]="'assets/lang-icons/' + lang.icon" class="flag">
+        <p>{{lang.name}}</p>
+      </div>
+      </ng-container>
+    </div>
+    <i class="nb-close" (click)="toggleMenu()"></i>
+</div>

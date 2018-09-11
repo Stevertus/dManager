@@ -1,0 +1,42 @@
+
+<nb-card>
+  <nb-card-header>
+    <img src="favicon.ico" alt=""> dManager
+  </nb-card-header>
+  <nb-card-body >
+    <p>dManager is a project developed and maintained by Stevertus.<br> You can upload and post Minecraft datapacks with a user account and promote it to the community.</p>
+    <b>Visit the dManager Website: </b> <a href="https://dmanager.stevertus.com">www.dmanager.stevertus.com</a>
+    <h2>Get in contact:</h2>
+    <b>Email:</b> <a href="mailto://stevertusyt@gmail.com">stevertusyt@gmail.com</a><br>
+      <b>Discord:</b> <a href="https://discord.gg/YWqwxr" target="_blank">www.discord.gg/YWqwxr</a><br>
+        <b>Youtube:</b> <a href="https://youtube.com/stevertus" target="_blank">www.youtube.com/stevertus</a><br>
+          <b>Twitter:</b> <a href="https://twitter.com/stevertus" target="_blank">www.twitter.com/stevertus</a><br><br>
+            <table>
+              <tr>
+                <th>Information</th>
+              </tr>
+              <tr>
+                <td>Version: </td><td>v{{version}}</td>
+              </tr>
+              <tr>
+                <td>Created by: </td><td><a href="https://stevertus.com">Stevertus</a></td>
+              </tr>
+              <tr>
+                <td>Privacy Policy: </td><td><a href="https://dmanager.stevertus.com/privacy/en">www.dmanager.stevertus.com/privacy/en</a></td>
+              </tr>
+              <tr>
+                <th>Translators: </th>
+              </tr>
+              <tr *ngFor="let lang of getKeys(translators)">
+                <td>{{lang}}:</td><td>{{translators[lang]}}</td>
+              </tr><br>
+              <tr>
+                <th>dManager © Stevertus 2018 | MIT Open Source License</th>
+              </tr>
+              <tr>
+                <td><a href="https://github.com/Stevertus/dManager">www.github.com/Stevertus/dManager</a></td>
+              </tr>
+            </table><br>
+            <lang-selector></lang-selector>
+          </nb-card-body>
+        </nb-card>

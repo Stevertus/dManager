@@ -1,0 +1,109 @@
+.selectLang {
+  cursor: pointer;
+  min-width: 250px;
+  height: 30px;
+  background-color: rgb(230, 230, 230);
+  border: 1px solid rgb(210, 210, 210);
+  border-radius: 15px;
+  padding: 0 15px;
+  position: relative;
+  p {
+    color: rgb(70, 70, 70);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 80px);
+    top: 3px;
+    font-size: 20px;
+    line-height: 20px;
+  }
+  .flag {
+    border-radius: 5px;
+    position: absolute;
+    height: 25px;
+    width: 25px;
+    right: 15px;
+    top: 8%;
+  }
+  .icon {
+    color: rgb(130, 130, 130);
+    font-size: 20px;
+    line-height: 30px;
+  }
+}
+.langMenu {
+  width: 960px;
+  min-height: 140px;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(5vh + 40px);
+  background-color: #535557;
+  border-radius: 10px;
+  z-index: 6;
+  .nb-close {
+    cursor: pointer;
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 30px;
+    height: 30px;
+    font-size: 28px;
+    background-color: rgb(230, 230, 230);
+    border: 1px solid rgb(210, 210, 210);
+    border-radius: 15px;
+    color: rgb(70, 70, 70);
+    &:hover {
+      background-color: darkenrgb(rgb(230, 230, 230),2);
+    }
+  }
+}
+.lang-item {
+  cursor: pointer;
+  position: relative;
+  width: 100%;
+  height: 40px;
+  margin: 5px 0;
+  padding: 7px 10px;
+    color: rgb(230, 230, 230);
+  border-radius: 10px;
+  .flag {
+    border-radius: 5px;
+    height: 25px;
+    width: 25px;
+  }
+  p {
+    position: absolute;
+    left: 40px;
+    top: 8px;
+    width: calc(100% - 50px);
+    font-size: 20px;
+    line-height: 20px;
+  }
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+}
+.lang-item.lang-active {
+  background-color: rgb(230, 230, 230);
+  color: rgb(70, 70, 70);
+}
+.langSection {
+  padding: 5px 10px;
+}
+.langSection-barrier {
+  border-right: 1px solid #828282;
+}
+@media only screen and (max-width: 960px){
+  .langMenu {
+    width: 98vw;
+  }
+}
+@media only screen and (max-width: 759px){
+  .langMenu {
+    grid-template-columns: 1fr 1fr
+  }
+}
