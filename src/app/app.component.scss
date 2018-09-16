@@ -1,3 +1,29 @@
+.selectWorldBack {
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.33);
+}
+.selectWorld {
+  width: 400px;
+  position: fixed;
+  height: 80vh;
+  top: 10vh;
+  left: 50vw;
+  transform: translateX(-50%);
+  background-color: #535557;
+  border-radius: 10px;
+  z-index: 6;
+  padding: 10px;
+  h2 {
+    text-align: center;
+    color: rgb(230, 230, 230);
+  }
+  overflow-y: auto;
+}
+
 .errorMessage {
   position: fixed;
   left: 50%;
@@ -41,19 +67,19 @@ nb-sidebar {
     overflow-y: auto;
     z-index: 2;
   }
-  .error {
-    position: absolute;
-    width: calc(100% - 2.5rem);
-    top: 50%;
-    transform: translateY(-50%);
-    img {
-      width: 100%;
-    }
-    p {
-      margin-top: 10px;
-      color: rgb(221, 221, 221);
-      font-size: 20px;
-    }
+}
+.error {
+  position: absolute;
+  width: calc(100% - 2.5rem);
+  top: 50%;
+  transform: translateY(-50%);
+  img {
+    width: 100%;
+  }
+  p {
+    margin-top: 10px;
+    color: rgb(221, 221, 221);
+    font-size: 20px;
   }
 }
 nb-sidebar-header {

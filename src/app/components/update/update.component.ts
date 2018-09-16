@@ -18,7 +18,7 @@ export class UpdateComponent implements OnInit {
     let i = 0
     this.electron.ipcRenderer.on('update-state',(e,state,args) => {
       this.show = true
-      if(!(state == 'error' && !this.state)) this.state = state
+      if(state != 'error' || state == 'error' && !this.state) this.state = state
       else if(typeof args == 'string') this.version = args
       console.log(state,args)
       if(state == 'downloading'){

@@ -25,6 +25,7 @@ nb-card {
 lang-selector {
   position: fixed;
   bottom: 20px;
-  right: 30px;
+  left: calc(50vw + 128px);
+  transform: translateX(-50%);
   width: 30vw;
 }

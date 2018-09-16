@@ -6,7 +6,7 @@
   "win": {
     "icon": "dist/favicon.ico",
     "target": [
-      "squirrel"
+      "portable"
     ]
   },
   "mac": {
@@ -23,5 +23,10 @@
   },
   "appImage": {
   "systemIntegration": "doNotAsk"
-  }
+},
+"protocols":[{
+  "name":"dmanager",
+  "role":"Viewer",
+  "schemes":["dmanager"]
+  }]
 }

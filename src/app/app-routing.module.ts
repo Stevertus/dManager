@@ -23,6 +23,10 @@ const routes: Routes = [
     {
         path: 'world/:name/pack/:id/:status/:version',
         component: PackPageComponent
+    },
+    {
+        path: 'world/:name/pack/:id',
+        component: PackPageComponent
     }
 ];
 

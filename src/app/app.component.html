@@ -1,6 +1,6 @@
 <nb-layout>
   <nb-sidebar left size="700px">
-    <nb-sidebar-header routerLink="">
+    <nb-sidebar-header routerLink="" (click)="onSelectWorld(undefined,-1)">
       <img src="favicon.ico" alt=""> <p>dManager</p>
     </nb-sidebar-header>
       <div class="container">
@@ -10,10 +10,11 @@
             <div class="icon"><img  *ngIf="world.icon" [src]="world.icon" alt=""></div>
             <div class="name">{{world.name}}</div></div>
         </ng-container>
-        <a class="btn btn-block" routerLink="/about" translate>about</a>
+
+        <a class="btn btn-block" routerLink="/about" (click)="onSelectWorld(undefined,-1)" translate>about</a>
         <div class="error" *ngIf="!worlds.length && noWorlds">
-          <img src="favicon.ico" alt="">
-          <p translate>no-worlds-found</p>
+          <img src="assets/ex-icon.svg" alt="">
+          <p translate>no-worlds</p>
         </div>
         <div class="error" *ngIf="!worlds.length && !noWorlds">
           <button class="btn btn-hero-success btn-block">Load Worlds</button>
@@ -35,4 +36,19 @@
 <nb-card class="errorMessage" *ngIf="newVersion">
   <nb-card-header><div [innerHtml]="'outdated' | translate"></div> <i class="nb-close" (click)="newVersion = false"></i></nb-card-header>
 </nb-card>
+<div class="selectWorld" *ngIf="protocolSelect">
+  <h2 translate>open-pack</h2>
+  <load-spinner color="#4e4e4e" *ngIf="!worlds.length && !noWorlds"></load-spinner>
+  <div class="error" *ngIf="!worlds.length && noWorlds">
+    <img src="assets/ex-icon.svg" alt="">
+    <p translate>no-worlds</p>
+    <button class="btn btn-info" (click)="protocolSelect = ''">Close</button>
+  </div>
+  <ng-container *ngFor="let world of worlds; let i = index">
+    <div class="world" (click)="onSelectWorld(world,i)" [routerLink]="'/world/' + world.name  + '/pack/' + protocolSelect">
+      <div class="icon"><img  *ngIf="world.icon" [src]="world.icon" alt=""></div>
+      <div class="name">{{world.name}}</div></div>
+  </ng-container>
+</div>
+<div class="selectWorldBack" *ngIf="protocolSelect" (click)="protocolSelect = ''"></div>
 <auto-updater></auto-updater>

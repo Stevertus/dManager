@@ -21,7 +21,7 @@
   .back {
     position: absolute;
     top: 10px;
-    left: 265px;
+    left: calc(265px + 2.25rem);
     cursor: default;
     z-index: 2;
   }

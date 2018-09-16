@@ -1,21 +1,23 @@
 <div class="container">
-  <button class="btn btn-outline-success" *ngIf="!user" (click)="toggleLoginDrop()" translate>login</button>
-  <nb-user *ngIf="user" [picture]="server.getCdnIcon(user.avatar)" [name]="user.username" (click)="toggleLoginDrop()"></nb-user>
+  <button class="btn btn-outline-success" *ngIf="!user" (click)="toggleLoginDrop()" translate>login.log-in</button>
+  <nb-user *ngIf="user" style="cursor:pointer" [picture]="server.getCdnIcon(user.avatar)" [name]="user.username" (click)="toggleLoginDrop()"></nb-user>
   <div class="login-drop" *ngIf="loginDrop">
     <div *ngIf="!user">
       <p class="desc" [innerHtml]="'login.explaination' | translate">
       </p>
+      <nb-alert *ngIf="loginError" style.width="100%" status="warning" closable (close)="loginError = ''">{{loginError}}</nb-alert>
+
       <div class="input-group">
         <input class="form-control" type="text" [placeholder]="'login.username-email' | translate" [(ngModel)]="name">
       </div>
       <div class="input-group">
         <input class="form-control" type="password" [placeholder]="'login.password' | translate" [(ngModel)]="password">
       </div>
-      <nb-alert *ngIf="loginError" style.width="100%" status="warning" closable (close)="loginError = ''">{{loginError}}</nb-alert>
 
-      <button class="btn btn-success btn-half" (click)="onLogin()" translate>login</button>
-      <a class="btn btn-info btn-half" href="https://dmanager.stevertus.ga/register" translate>register</a>
+      <button class="btn btn-success btn-half" (click)="onLogin()" translate>login.log-in</button>
+      <a class="btn btn-info btn-half" href="https://dmanager.stevertus.com/register" translate>login.register</a>
     </div>
+    <p *ngIf="user">You are logged in as: {{user.username}}</p>
     <button *ngIf="user" class="btn btn-warning btn-block" translate (click)="onLogOut()">toolbar.log-out</button>
   </div>
 </div>

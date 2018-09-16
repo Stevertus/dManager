@@ -1,6 +1,7 @@
-import { app, BrowserWindow, screen, shell, dialog, autoUpdater, ipcMain } from 'electron';
+import { app, BrowserWindow, screen, shell, dialog, autoUpdater, ipcMain, protocol } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
+/*
 const ChildProcess = require('child_process');
 const exeName = path.basename(process.execPath);
 const updateDotExe = path.resolve(path.join(path.resolve(path.resolve(process.execPath, '..'), '..'), 'Update.exe'));
@@ -12,16 +13,18 @@ const startAutoUpdater = (squirrelUrl) => {
   autoUpdater.setFeedURL(`${squirrelUrl}/`);
 
   autoUpdater.addListener("update-available", (event, releaseNotes, releaseName) => {
+    win.webContents.executeJavaScript(`console.log("downloading${JSON.stringify(event)}")`)
     win.webContents.send('update-state','downloading',releaseName)
   });
   autoUpdater.addListener("update-downloaded", (event, releaseNotes, releaseName) => {
+    win.webContents.executeJavaScript(`console.log("downloaded${JSON.stringify(event)}")`)
     win.webContents.send('update-state','restart',releaseName)
   });
 
-  autoUpdater.addListener("error", (error) => {
-    win.webContents.send('update-state','error',error)
-  });
-
+  autoUpdater.addListener("error", function(error: any,msg: any = ""){
+    win.webContents.executeJavaScript(`console.log("download error${JSON.stringify(msg)}")`)
+    win.webContents.send('update-state','error',msg)
+  })
   autoUpdater.checkForUpdates();
 }
 const handleSquirrelEvent = () => {
@@ -35,8 +38,10 @@ const handleSquirrelEvent = () => {
     case '--squirrel-updated':
       ChildProcess.spawn(updateDotExe,['--createShortcut', exeName], {detached: true});
       setTimeout(app.quit, 1000);
+      app.setAsDefaultProtocolClient('dmanager')
       return true;
     case '--squirrel-uninstall':
+      app.removeAsDefaultProtocolClient('dmanager')
       ChildProcess.spawn(updateDotExe,['--removeShortcut', exeName], {detached: true});
       setTimeout(app.quit, 1000);
       return true;
@@ -51,8 +56,7 @@ handleSquirrelEvent()
 ipcMain.on('restart',(e,a) => {
   autoUpdater.quitAndInstall()
 })
-
-
+*/
 let win, serve;
 const args = process.argv.slice(1);
 serve = args.some(val => val === '--serve');
@@ -85,15 +89,19 @@ function createWindow() {
      electron: require(`${__dirname}/node_modules/electron`)});
     win.loadURL('http://localhost:4200');
   } else {
-    if (process.env.NODE_ENV !== "dev") startAutoUpdater(squirrelUrl)
+    //if (process.env.NODE_ENV !== "dev") startAutoUpdater(squirrelUrl)
     win.loadURL(url.format({
       pathname: path.join(__dirname, 'dist/index.html'),
       protocol: 'file:',
       slashes: true
     }));
+    protocol.registerHttpProtocol('dmananger',(req,cb) => {
+      win.webContents.executeJavaScript(`console.log("${JSON.stringify(req)}")`)
+    })
   }
   var handleRedirect = (e, url) => {
-  if(url != win.webContents.getURL()) {
+    if(url.includes('javascript()')) e.preventDefault()
+    else if(url != win.webContents.getURL()) {
     console.log(url)
     e.preventDefault()
     require('electron').shell.openExternal(url)

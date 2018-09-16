@@ -11,6 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class AppComponent implements OnInit {
   worlds: any = []
+  protocolSelect = ''
   noWorlds = false
   selectedWorld = -1
   currentVersion = '1.1'
@@ -45,6 +46,12 @@ export class AppComponent implements OnInit {
   ngOnInit(){
     this.getWorlds()
     this.electronService.registerStartup()
+    console.log(this.electronService.remote.process.argv)
+    var maybeProtocol = this.electronService.remote.process.argv.find(x => x.substr(0,16) == 'dmanager://open/')
+    if(maybeProtocol){
+      this.protocolSelect = maybeProtocol.substr(16)
+      console.log("Detected Protocol!",this.protocolSelect)
+    }
     this.electronService.isUptoDate().then((res:any) => {
       console.log(res)
       if(res && res.length < 10 && this.currentVersion != res) this.newVersion = true
@@ -81,6 +88,7 @@ export class AppComponent implements OnInit {
     })
   }
   onSelectWorld(world,i){
+    this.protocolSelect = ''
     this.selectedWorld = i
   }
 }

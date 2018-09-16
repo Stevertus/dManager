@@ -19,3 +19,10 @@ nb-card-header {
     height: 40px;
   }
 }
+lang-selector {
+  position: fixed;
+  bottom: 15vh;
+  left: calc(50vw + 128px);
+  transform: translateX(-50%);
+  width: 900px;
+}

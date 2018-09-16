@@ -20,7 +20,7 @@ export class LangSelectorComponent implements OnInit {
   {id: 'es', name: 'Español', icon: 'es.png'},
   {id: 'prt', name: 'Português', icon: 'prt.png'},
   {id: 'nld', name: 'Nederlands', icon: 'nld.png'},
-  {id: 'dnk', name: 'Dansk', icon: 'dnk.png'}
+  {id: 'da', name: 'Dansk', icon: 'da.png'}
 ]
   constructor(private translate: TranslateService) { }
 
@@ -35,7 +35,7 @@ export class LangSelectorComponent implements OnInit {
       i += 5
     } while (i < this.languages.length)
 
-    if(this.translate.getBrowserLang() && !localStorage.getItem('lang')) localStorage.setItem("lang", this.translate.getBrowserLang())
+    if(this.translate.getBrowserLang() && !localStorage.getItem('lang') && this.languages.find(x => x.id == this.translate.getBrowserLang())) localStorage.setItem("lang", this.translate.getBrowserLang())
     this.translate.setDefaultLang('en');
     if(localStorage.getItem('lang')) {
       let langTag = localStorage.getItem('lang')

@@ -21,6 +21,6 @@
   width: calc(100% - 20px)
 }
 .btn-half {
-  width: calc(50% - 10px);
+  min-width: calc(50% - 10px);
   margin: 5px;
 }

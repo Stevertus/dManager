@@ -108,7 +108,7 @@ packsCreator:any
           this.electronService.getInstalledPacks(this.worldName).then((res: any) => {
             this.installedPacks = res
             console.log('installed',res)
-            this.getInstalledPacks(allPacks)
+            this.getInstalledPacks(allPacks,isOffline)
           })
         }
     }

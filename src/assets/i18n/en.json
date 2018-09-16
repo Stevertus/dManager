@@ -14,6 +14,8 @@
   "change-to": "Change Version to",
   "offline": "Offline",
   "by-creator": "by",
+    "about": "About",
+    "open-pack":"Please select a world in order to view the pack:",
   "load-worlds": "Load worlds",
   "no-worlds": "There are no worlds in the selected minecraft folder!",
   "no-worlds-found": "Sorry, but no worlds were found! Please check if you put the executeable into the .minecraft folder or select a minecraft folder:",
