@@ -7,16 +7,19 @@ const exeName = path.basename(process.execPath);
 const updateDotExe = path.resolve(path.join(path.resolve(path.resolve(process.execPath, '..'), '..'), 'Update.exe'));
 
 const squirrelUrl = "https://dmanager.stevertus.com/cdn/Releases"
+const squirrelEvent = process.argv[1];
 
 const startAutoUpdater = (squirrelUrl) => {
   console.log(squirrelUrl)
+
+  if(squirrelEvent == '--squirrel-updated') win.webContents.send('update-state','updated',app.getVersion())
   autoUpdater.setFeedURL(`${squirrelUrl}/`);
 
-  autoUpdater.addListener("update-available", (event, releaseNotes, releaseName) => {
+  autoUpdater.addListener("update-available", (event, releaseName) => {
     win.webContents.executeJavaScript(`console.log("downloading${JSON.stringify(event)}")`)
     win.webContents.send('update-state','downloading',releaseName)
   });
-  autoUpdater.addListener("update-downloaded", (event, releaseNotes, releaseName) => {
+  autoUpdater.addListener("update-downloaded", (event, releaseName) => {
     win.webContents.executeJavaScript(`console.log("downloaded${JSON.stringify(event)}")`)
     win.webContents.send('update-state','restart',releaseName)
   });
@@ -32,7 +35,6 @@ const handleSquirrelEvent = () => {
     return false;
   }
 
-  const squirrelEvent = process.argv[1];
   switch (squirrelEvent) {
     case '--squirrel-install':
     case '--squirrel-updated':

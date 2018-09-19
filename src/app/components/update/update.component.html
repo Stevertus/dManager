@@ -1,5 +1,6 @@
 <div class="contains" *ngIf="show">
-  <h2 translate>updater.available</h2>
+  <h2 translate *ngIf="state != 'updated'">updater.available</h2>
+  <h2 translate *ngIf="state == 'updated'">installed</h2>
   <div class="new" *ngIf="version">{{'updater.new' | translate}} v{{version}}</div>
   <button class="btn btn-block" *ngIf="state == 'downloading'" disabled>{{'updater.downloading' | translate}}{{animatedPoints}}</button>
   <p *ngIf="state == 'restart'" translate>updater.restart</p>
