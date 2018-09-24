@@ -14,8 +14,7 @@ export class AppComponent implements OnInit {
   protocolSelect = ''
   noWorlds = false
   selectedWorld = -1
-  currentVersion = '1.1'
-  newVersion = false
+  newVersion = ''
   constructor(public electronService: ElectronService,private router: Router,private translate: TranslateService) {
 
     console.log('AppConfig', AppConfig);
@@ -30,11 +29,13 @@ export class AppComponent implements OnInit {
         if(!path){
           this.electronService.remote.app.getAppPath().split("/")
           if(path.length == 1) path = path[0].split("\\")
-          let index = path.indexOf(".minecraft")
-          if(index != -1){
-            path = path.slice(0,index + 1)
-          }
-          path = path.join("/")
+          if(path && path.length){
+            let index = path.indexOf(".minecraft")
+            if(index != -1){
+              path = path.slice(0,index + 1)
+            }
+            path = path.join("/")
+          } else path = this.electronService.remote.app.getAppPath()
         }
         if(this.electronService.fs.existsSync(path)) localStorage.setItem('mcFolder',path)
         console.log("detected " + path + " as minecraft folder")
@@ -54,7 +55,7 @@ export class AppComponent implements OnInit {
     }
     this.electronService.isUptoDate().then((res:any) => {
       console.log(res)
-      if(res && res.length < 10 && this.currentVersion != res) this.newVersion = true
+      if(res && res.length < 10 && this.electronService.remote.app.getVersion() != res) this.newVersion = 'linux'
     })
     if(this.translate.getBrowserLang() && !localStorage.getItem('lang')) localStorage.setItem("lang", this.translate.getBrowserLang())
     this.translate.setDefaultLang('en');

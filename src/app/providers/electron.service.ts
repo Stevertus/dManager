@@ -65,7 +65,7 @@ saveMc(url,file,encoding = 'base64'){
   return promise
 }
 isUptoDate(){
-  return this.server.getTextFile('/downloads/dManager version.txt')
+  return this.server.getTextFile('/cdn/Releases/version.txt')
 }
 installedDatapacks: any = {}
 getInstalledPacks(world){

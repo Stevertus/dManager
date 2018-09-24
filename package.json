@@ -1,6 +1,6 @@
 {
   "name": "dManager",
-  "version": "1.5.2",
+  "version": "2.0.0",
   "description": "A Manager, installer and updater for Minecraft 1.13 datapacks.",
   "homepage": "http://dmanager.stevertus.com",
   "author": {

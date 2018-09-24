@@ -38,7 +38,7 @@ import { ListItemComponent } from './components/list-item/list-item.component';
 import { LoginComponent } from './components/login/login.component'
 import { SpinnerComponent } from './components/spinner/spinner.component'
 import { SearchPipe } from './components/search.pipe';
-import { UpdateComponent } from './components/update/update.component'
+import { UpdateComponent } from './components/update/update.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http,'assets/i18n/', '.json');

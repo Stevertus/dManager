@@ -49,6 +49,12 @@ export class PackPageComponent implements OnInit {
       this.alreadyRated = JSON.parse(localStorage.getItem('dm-ratings'))[this.packId]
     }
   }
+  getVersion(v){
+    if(parseInt(v[0])){
+      return 'v' + v
+    }
+    return v
+  }
   getButtonState(){
     if(this.status == 'installing') return -1
         let selectedVersion = this.selectedVersion

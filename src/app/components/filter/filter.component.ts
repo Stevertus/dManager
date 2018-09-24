@@ -38,13 +38,14 @@ export class FilterComponent implements OnInit {
     }
   }
   languages = [
+  {id: 'en', name: 'English', icon: 'en.png'},
   {id: 'de', name: 'Deutsch', icon: 'de.png'},
   {id: 'fr', name: 'Français', icon: 'fr.png'},
   {id: 'rus', name: 'Русский', icon: 'rus.png'},
   {id: 'es', name: 'Español', icon: 'es.png'},
   {id: 'prt', name: 'Português', icon: 'prt.png'},
   {id: 'nld', name: 'Nederlands', icon: 'nld.png'},
-  {id: 'dnk', name: 'Dansk', icon: 'dnk.png'}
+  {id: 'da', name: 'Dansk', icon: 'da.png'}
 ]
   @ViewChild('searchInputField') searchInputField: ElementRef
   constructor(private translate: TranslateService,private router: Router) { }

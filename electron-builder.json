@@ -6,7 +6,11 @@
   "win": {
     "icon": "dist/favicon.ico",
     "target": [
-      "portable"
+      {"target": "portable",
+        "arch": [
+          "ia32"
+        ]
+      }
     ]
   },
   "mac": {
@@ -22,11 +26,11 @@
     ]
   },
   "appImage": {
-  "systemIntegration": "doNotAsk"
-},
-"protocols":[{
-  "name":"dmanager",
-  "role":"Viewer",
-  "schemes":["dmanager"]
-  }]
-}
+    "systemIntegration": "doNotAsk"
+  },
+  "protocols":[{
+    "name":"dmanager",
+    "role":"Viewer",
+    "schemes":["dmanager"]
+    }]
+  }
